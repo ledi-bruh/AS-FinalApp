@@ -4,13 +4,20 @@ from src.api.base_router import base_router
 
 
 tags = [
-    
+    {
+        "name": "auth",
+        "description": "Вход в админ-панель"
+    },
+    {
+        "name": "users",
+        "description": "Управление пользователями"
+    },
 ]
 
 app = FastAPI(
     title='Сервер',
     description='Сервер для финального приложения',
-    version='0.0.1',
+    version='0.0.3',
     openapi_tags=tags,
 )
 
