@@ -17,7 +17,7 @@ tags = [
 app = FastAPI(
     title='Сервер',
     description='Сервер для финального приложения',
-    version='0.0.3',
+    version='0.0.3.1',
     openapi_tags=tags,
 )
 

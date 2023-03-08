@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     db_host: str
     db_port: int
     db_database: str
+    db_schema: str
     
     jwt_secret: str
     jwt_algorithm: str
