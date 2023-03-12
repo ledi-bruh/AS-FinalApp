@@ -8,3 +8,7 @@ alembic
 python-jose
 passlib
 python-multipart
+pandas
+scikit-learn
+xgboost
+dash
