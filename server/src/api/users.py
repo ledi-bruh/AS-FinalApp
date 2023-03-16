@@ -4,7 +4,7 @@ from pydantic import UUID4
 from src.services.users import UsersService
 from src.models.schemas.users.users_request import UsersRequest
 from src.models.schemas.users.users_response import UsersResponse
-from src.api.utils.admin_checker import ADMIN_ONLY
+from src.api.utils.role_checker import ADMIN_ONLY
 from src.api.utils.query_logger import QUERY_LOGGER
 
 

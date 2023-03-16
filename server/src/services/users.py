@@ -48,7 +48,8 @@ class UsersService:
 
         user = Users(
             login=request.login,
-            password_hashed=SecureService.hash_password(request.password_text)
+            password_hashed=SecureService.hash_password(request.password_text),
+            role=request.role
         )
 
         self.session.add(user)

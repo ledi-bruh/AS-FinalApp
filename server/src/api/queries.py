@@ -1,7 +1,7 @@
 from fastapi import APIRouter, status, Depends
 from pydantic import UUID4
 from src.services.queries import QueriesService
-from src.api.utils.admin_checker import ADMIN_ONLY
+from src.api.utils.role_checker import ADMIN_ONLY
 
 
 router = APIRouter(

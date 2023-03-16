@@ -26,6 +26,7 @@ def upgrade() -> None:
         sa.Column('guid', GUID, nullable=False),
         sa.Column('login', sa.String(), nullable=False),
         sa.Column('password_hashed', sa.String(), nullable=False),
+        sa.Column('role', sa.String(), nullable=False),
         sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
         sa.PrimaryKeyConstraint('guid'),
         sa.UniqueConstraint('login'),
@@ -35,6 +36,7 @@ def upgrade() -> None:
         'guid': GUID_DEFAULT_SQLITE(),
         'login': settings.admin_login,
         'password_hashed': SecureService.hash_password(settings.admin_password),
+        'role': 'admin',
     }])
     
     op.create_table('queries',

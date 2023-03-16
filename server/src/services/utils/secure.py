@@ -10,7 +10,3 @@ class SecureService:
     @staticmethod
     def verify_password(password_text: str, password_hash: str) -> bool:
         return pbkdf2_sha256.verify(password_text, password_hash)
-
-    @staticmethod
-    def is_admin_user(user_login: str) -> bool:
-        return user_login == settings.admin_login

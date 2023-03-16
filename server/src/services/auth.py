@@ -23,30 +23,33 @@ class AuthService:
         self.session = session
 
     @staticmethod
-    def encode_token(user_guid: str, user_login: str) -> JwtToken:
+    def encode_token(user_guid: str, user_role: str) -> JwtToken:
         now = datetime.now(timezone.utc)
         payload = {
             'iat': now,
             'exp': now + timedelta(seconds=settings.jwt_expires_seconds),
             'user_guid': str(user_guid),
-            'is_admin': SecureService.is_admin_user(user_login)
+            'user_role': user_role
         }
+        
         token = jwt.encode(payload, settings.jwt_secret, algorithm=settings.jwt_algorithm)
+        
         return JwtToken(access_token=token)
 
     @staticmethod
-    def decode_token(token: str) -> Optional[dict]:
+    def decode_token(token: str) -> dict:
         try:
             payload = jwt.decode(token, settings.jwt_secret, algorithms=[settings.jwt_algorithm])
         except JWTError:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Некорректный токен')
+        
         return {
-            'user_guid': payload.get('user_guid'),
-            'is_admin': payload.get('is_admin')
+            'guid': payload.get('user_guid'),
+            'role': payload.get('user_role')
         }
     
-    def login(self, login: str, password_text: str) -> Optional[JwtToken]:
-        user = (
+    def login(self, login: str, password_text: str) -> JwtToken:
+        user: Users = (
             self.session
             .query(Users)
             .filter(Users.login == login)
@@ -58,4 +61,4 @@ class AuthService:
         if not SecureService.verify_password(password_text, user.password_hashed):
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
         
-        return self.encode_token(user.guid, user.login)
+        return self.encode_token(user.guid, user.role)
