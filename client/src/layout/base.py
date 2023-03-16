@@ -1,9 +1,9 @@
-from dash import dcc, html
+from dash import html, dcc
 
-base_layout = html.Div([
-    html.H1('Hello Dash'),
-    html.Div([
-        html.P('Dash converts Python classes into HTML'),
-        html.P("This conversion happens behind the scenes by Dash's JavaScript front-end")
-    ], style={'color': 'blue', 'fontSize': 14})
+base_layout = html.Div(children=[
+    dcc.Tabs(id="tabs", value='tab-1', children=[
+        dcc.Tab(label='Tab one', value='tab-1'),
+        dcc.Tab(label='Tab two', value='tab-2'),
+    ]),
+    html.Div(id='tabs-content')
 ])
