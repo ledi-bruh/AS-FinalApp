@@ -3,7 +3,7 @@ from dash import html, dcc
 
 # from pages.iris.iris_data import dataframe
 
-from components.table import make_dash_table
+from src.components.table import make_dash_table
 
 
 # controls = dbc.Card(
