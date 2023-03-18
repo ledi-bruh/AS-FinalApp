@@ -8,6 +8,6 @@ layout = dbc.Container(
         dcc.Input(id='username-input', type='text', placeholder='Username'),
         dcc.Input(id='password-input', type='password', placeholder='Password'),
         html.Button('Sign In', id='sign-in-button'),
-        html.Div(id='access-response'),
+        html.Div(id='auth-output'),
     ]
 )

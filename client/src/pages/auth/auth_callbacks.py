@@ -16,11 +16,13 @@ def authenticate_user(username: str, password: str):
 
     if response.status_code == 200:
         return response_json.get('access_token')
+    elif response.status_code == 401:
+        raise Exception('Unauthorized')
     else:
         return None
 
 
-@app.callback([Output('access-response', 'children'),
+@app.callback([Output('auth-output', 'children'),
                Output('token-store', 'data')],
               [Input('sign-in-button', 'n_clicks')],
               [State('username-input', 'value'),

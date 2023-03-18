@@ -1,8 +1,9 @@
 from dash import html
-from utils.functions import format_decimal
+import pandas as pd
+from src.utils.functions import format_decimal
 
 
-def make_dash_table(df):
+def make_dash_table(df: pd.DataFrame):
     body = []
     header = []
 
