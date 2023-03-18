@@ -1,12 +1,12 @@
 import dash_bootstrap_components as dbc
 from dash import html
 
-from src.utils.constants import home_page_location, gdp_page_location, iris_page_location
+from src.utils.constants import home_page_location, gdp_page_location, iris_page_location, auth_page_location, data_page_location
 
 
 sidebar_header = dbc.Row(
     [
-        dbc.Col(html.H2("Sidebar", className="display-4")),
+        dbc.Col(html.H2("Меню", className="display-4")),
         dbc.Col(
             [
                 html.Button(
@@ -44,16 +44,10 @@ sidebar_header = dbc.Row(
 sidebar = html.Div(
     [
         sidebar_header,
-        # we wrap the horizontal rule and short blurb in a div that can be
-        # hidden on a small screen
         html.Div(
             [
                 html.Hr(),
-                html.P(
-                    "A responsive sidebar layout with collapsible navigation "
-                    "links.",
-                    className="lead",
-                ),
+                html.P("Навигация", className="lead"),
             ],
             id="blurb",
         ),
@@ -61,9 +55,11 @@ sidebar = html.Div(
         dbc.Collapse(
             dbc.Nav(
                 [
-                    dbc.NavLink("Home", href=home_page_location, active="exact"),
-                    dbc.NavLink("GDP", href=gdp_page_location, active="exact"),
-                    dbc.NavLink("Iris", href=iris_page_location, active="exact"),
+                    dbc.NavLink("Войти", href=auth_page_location, active="exact"),
+                    dbc.NavLink("Домой", href=home_page_location, active="exact"),
+                    dbc.NavLink("Датасет", href=data_page_location, active="exact"),
+                    # dbc.NavLink("GDP", href=gdp_page_location, active="exact"),
+                    # dbc.NavLink("Iris", href=iris_page_location, active="exact"),
                 ],
                 vertical=True,
                 pills=True,
