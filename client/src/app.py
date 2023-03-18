@@ -1,6 +1,5 @@
 import dash
 import dash_bootstrap_components as dbc
-
 from src.utils.external_assets import FONT_AWESOME, CUSTOM_STYLE
 from src.layout.layout import layout
 
@@ -13,9 +12,9 @@ app = dash.Dash(
         FONT_AWESOME,
         CUSTOM_STYLE
     ],
-    # meta_tags=[
-    #     {"name": "viewport", "content": "width=device-width, initial-scale=1"}
-    # ]
+    meta_tags=[
+        {"name": "viewport", "content": "width=device-width, initial-scale=1"}
+    ]
 )
 
 app.layout = layout

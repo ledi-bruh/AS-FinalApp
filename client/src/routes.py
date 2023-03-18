@@ -1,9 +1,7 @@
 from dash import html, Input, Output
 import dash_bootstrap_components as dbc
-
 from app import app
 from src.utils.constants import home_page_location, gdp_page_location, iris_page_location
-
 from src.pages.home import home
 from src.pages.gdp import gdp
 from src.pages.iris import iris

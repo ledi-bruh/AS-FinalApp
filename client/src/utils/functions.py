@@ -1,2 +1,2 @@
-def formatter_2_decimals(x):
-	return "{:.2f}".format(x)
+def format_decimal(x: float, n: int) -> float:
+	return f'{x:.{n}f}'

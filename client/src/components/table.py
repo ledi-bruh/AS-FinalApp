@@ -1,5 +1,5 @@
 from dash import html
-from utils.functions import formatter_2_decimals
+from utils.functions import format_decimal
 
 
 def make_dash_table(df):
@@ -12,7 +12,7 @@ def make_dash_table(df):
     for index, row in df.iterrows():
         html_row = []
         for i in range(len(row)):
-            html_row.append(html.Td(formatter_2_decimals(row[i])))
+            html_row.append(html.Td(format_decimal(row[i], 2)))
         body.append(html.Tr(html_row))
     
     tHead = html.Thead(html.Tr(header))

@@ -1,11 +1,9 @@
 import dash_bootstrap_components as dbc
 from dash import html
 
-from utils.constants import home_page_location, gdp_page_location, iris_page_location
+from src.utils.constants import home_page_location, gdp_page_location, iris_page_location
 
 
-# we use the Row and Col components to construct the sidebar header
-# it consists of a title, and a toggle, the latter is hidden on large screens
 sidebar_header = dbc.Row(
     [
         dbc.Col(html.H2("Sidebar", className="display-4")),
