@@ -4,23 +4,24 @@ import numpy as np
 import pandas as pd
 from math import sqrt
 from fastapi import status, HTTPException
-from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, mean_absolute_error, mean_absolute_percentage_error, r2_score
 from sklearn.pipeline import Pipeline
-from sklearn.compose import ColumnTransformer, make_column_transformer
+from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler, OrdinalEncoder, FunctionTransformer
 from xgboost import XGBRegressor
 
 
-# ! возможно сделать singleton
 class MLService:
     def __init__(self):
-        self.target = 'Consumption (GAL)'
+        self.target: str = 'Consumption (GAL)'
+
         self.numeric_cols: list = ['# days', 'TDS #', 'Current Charges', 'EDP']
+
         self.categorical_cols: list = ['Development Name', 'Borough', 'Account Name', 'Meter AMR', 'RC Code',
                                        'Funding Source', 'AMP #', 'Vendor Name', 'Meter Number', 'Estimated', 'Revenue Month']
-
+    
+    def fit_preprocessor(self, data: pd.DataFrame) -> None:
         cols_to_drop: list = ['index', 'Location', 'Meter Scope',
                               'UMIS BILL ID', 'Service Start Date', 'Service End Date']
 
@@ -33,18 +34,31 @@ class MLService:
             ('encoder', OrdinalEncoder(handle_unknown='use_encoded_value', unknown_value=-1))
         ])
 
-        self.preprocessor = ColumnTransformer(transformers=[
+        preprocessor = ColumnTransformer(transformers=[
             ('drop', FunctionTransformer(
                 pd.DataFrame.drop,
                 kw_args={'columns': cols_to_drop}), cols_to_drop),
             ('num', numeric_transformer, self.numeric_cols),
             ('cat', categorical_transformer, self.categorical_cols)
-        ], remainder='passthrough', verbose_feature_names_out=False)
+        ], remainder='passthrough')
+        
+        X_df = data.drop([self.target], axis=1) if self.target in data.columns else data
+        preprocessor.fit(X_df)
+        
+        with open('ml_models/preprocessor.joblib', 'wb') as f:
+            joblib.dump(preprocessor, f, compress=3)
 
     def prepare_df(self, data: pd.DataFrame) -> pd.DataFrame:
+        if not os.path.isfile('ml_models/preprocessor.joblib'):
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail='Нет файла для предобработки')
+            
+        with open('ml_models/preprocessor.joblib', 'rb') as f:
+            preprocessor: ColumnTransformer = joblib.load(f)
+        
         y_df = data[self.target] if self.target in data.columns else None
         X_df = data.drop([self.target], axis=1) if self.target in data.columns else data
-        data = pd.DataFrame(self.preprocessor.fit_transform(X_df), columns=self.numeric_cols+self.categorical_cols)
+        data = pd.DataFrame(preprocessor.transform(X_df), columns=self.numeric_cols+self.categorical_cols)
         if y_df is not None:
             data[self.target] = y_df
         return data
@@ -53,7 +67,7 @@ class MLService:
         model = XGBRegressor(seed=73, max_depth=7)
         model.fit(X_train, y_train)
 
-        with open('ml_models/model.sav', 'wb') as f:
+        with open('ml_models/model.joblib', 'wb') as f:
             joblib.dump(model, f, compress=3)
 
     def fit_df(self, data: pd.DataFrame) -> None:
@@ -62,14 +76,15 @@ class MLService:
         self.fit(np.array(X), np.array(y))
 
     def fit_df_with_prepare(self, data: pd.DataFrame) -> None:
+        self.fit_preprocessor(data)
         self.fit_df(self.prepare_df(data))
 
     def predict(self, X: np.ndarray) -> np.ndarray:
-        if not os.path.isfile('ml_models/model.sav'):
+        if not os.path.isfile('ml_models/model.joblib'):
             raise HTTPException(
-                status_code=status.HTTP_405_METHOD_NOT_ALLOWED, detail='Нет файла с моделью')
+                status_code=status.HTTP_404_NOT_FOUND, detail='Нет файла с моделью')
 
-        with open('ml_models/model.sav', 'rb') as f:
+        with open('ml_models/model.joblib', 'rb') as f:
             model: XGBRegressor = joblib.load(f)
 
         return model.predict(X)

@@ -1,15 +1,14 @@
-from fastapi import APIRouter, status, HTTPException, Depends, UploadFile, Response, BackgroundTasks
-from pydantic import UUID4
-import pandas as pd
+from fastapi import APIRouter, Depends, UploadFile, Response, BackgroundTasks
 from src.services.ml import MLService
 from src.services.file import FileService
 from src.services.auth import get_current_user
-from api.utils.query_logger import QUERY_LOGGER
+from src.api.utils.query_logger import QUERY_LOGGER
+
 
 router = APIRouter(
     prefix='/ml',
     tags=['ml'],
-    # dependencies=[Depends(get_current_user), Depends(QUERY_LOGGER)]
+    dependencies=[Depends(get_current_user), Depends(QUERY_LOGGER)]
 )
 
 
