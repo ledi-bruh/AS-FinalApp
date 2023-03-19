@@ -14,19 +14,45 @@ router = APIRouter(
 
 
 @router.post('/prepare', name='Предобработать данные')
-def prepare_data(background_task: BackgroundTasks, file: UploadFile, encoding: str = 'utf-8', sep: str = ',', service: MLService = Depends(), file_service: FileService = Depends()):
+def prepare_df(background_task: BackgroundTasks, file: UploadFile, encoding: str = 'utf-8', sep: str = ',', service: MLService = Depends(), file_service: FileService = Depends()):
     data = file_service.upload_csv(file, encoding=encoding, sep=sep)
     headers = {'Content-Disposition': f'attachment; filename=prepared_data.csv'}
-    return Response(service.prepare_data(data).to_csv(), media_type='text/csv', headers=headers, background=background_task)
+    return Response(service.prepare_df(data).to_csv(index=False), media_type='text/csv', headers=headers, background=background_task)
 
 
-@router.post('/predict', name='Получить предсказания')
-def predict_data(background_task: BackgroundTasks, file: UploadFile, encoding: str = 'utf-8', sep: str = ',', service: MLService = Depends(), file_service: FileService = Depends()):
+@router.post('/fit', name='Обучить модель на предобработанных данных')
+def fit_df(file: UploadFile, encoding: str = 'utf-8', sep: str = ',', service: MLService = Depends(), file_service: FileService = Depends()):
     data = file_service.upload_csv(file, encoding=encoding, sep=sep)
-    headers = {'Content-Disposition': f'attachment; filename=prepared_data.csv'}
-    return Response(service.predict_data(data).to_csv(), media_type='text/csv', headers=headers, background=background_task)
+    return service.fit_df(data)
 
 
-@router.get('/quality', name='Узнать качество модели')
-def get_quality(service: MLService = Depends()):
-    return service.get_quality()
+@router.post('/fit/prepare', name='Обучить модель на не предобработанных данных')
+def fit_df_with_prepare(file: UploadFile, encoding: str = 'utf-8', sep: str = ',', service: MLService = Depends(), file_service: FileService = Depends()):
+    data = file_service.upload_csv(file, encoding=encoding, sep=sep)
+    return service.fit_df_with_prepare(data)
+
+
+@router.post('/predict', name='Получить предсказания на предобработанных данных')
+def predict_df(background_task: BackgroundTasks, file: UploadFile, encoding: str = 'utf-8', sep: str = ',', service: MLService = Depends(), file_service: FileService = Depends()):
+    data = file_service.upload_csv(file, encoding=encoding, sep=sep)
+    headers = {'Content-Disposition': f'attachment; filename=predicted_data.csv'}
+    return Response(service.predict_df(data).to_csv(index=False), media_type='text/csv', headers=headers, background=background_task)
+
+
+@router.post('/predict/prepare', name='Получить предсказания на не предобработанных данных')
+def predict_df_with_prepare(background_task: BackgroundTasks, file: UploadFile, encoding: str = 'utf-8', sep: str = ',', service: MLService = Depends(), file_service: FileService = Depends()):
+    data = file_service.upload_csv(file, encoding=encoding, sep=sep)
+    headers = {'Content-Disposition': f'attachment; filename=predicted_data.csv'}
+    return Response(service.predict_df_with_prepare(data).to_csv(index=False), media_type='text/csv', headers=headers, background=background_task)
+
+
+@router.post('/quality', name='Узнать качество модели по предобработанным данным')
+def get_quality_df(file: UploadFile, encoding: str = 'utf-8', sep: str = ',', service: MLService = Depends(), file_service: FileService = Depends()):
+    data = file_service.upload_csv(file, encoding=encoding, sep=sep)
+    return service.get_quality_df(data)
+
+
+@router.post('/quality/prepare', name='Узнать качество модели по предобработанным данным')
+def get_quality_df(file: UploadFile, encoding: str = 'utf-8', sep: str = ',', service: MLService = Depends(), file_service: FileService = Depends()):
+    data = file_service.upload_csv(file, encoding=encoding, sep=sep)
+    return service.get_quality_df_with_prepare(data)

@@ -1,37 +1,89 @@
 import os
-from fastapi import status, HTTPException
-from sklearn.metrics import mean_squared_error, mean_absolute_error, mean_absolute_percentage_error, r2_score
-from math import sqrt
+import joblib
 import numpy as np
 import pandas as pd
+from math import sqrt
+from fastapi import status, HTTPException
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error, mean_absolute_error, mean_absolute_percentage_error, r2_score
+from sklearn.pipeline import Pipeline
+from sklearn.compose import ColumnTransformer, make_column_transformer
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import StandardScaler, OrdinalEncoder, FunctionTransformer
 from xgboost import XGBRegressor
-import joblib
 
+
+# ! возможно сделать singleton
 class MLService:
-    def prepare_data(self, data: pd.DataFrame) -> pd.DataFrame:
-        data.set_index('index', inplace=True)
-        data.drop(columns=['Meter Scope', 'Location', 'UMIS BILL ID', 'Service Start Date', 'Service End Date'], inplace=True)
-        
-        for col in ('Meter AMR', 'Funding Source', 'AMP #'):
-            data[col].fillna(data[col].mode()[0], inplace=True)
-        
-        for col in ('Development Name', 'Borough', 'Account Name', 'Meter AMR', 'RC Code', 'Funding Source',
-                    'AMP #', 'Vendor Name', 'Revenue Month', 'Meter Number', 'Estimated'):
-            data[col] = data[col].map({v: k+1 for k, v in enumerate(data[col].unique())})
-        # ! надо запоминать соответствия
-        
+    def __init__(self):
+        self.target = 'Consumption (GAL)'
+        self.numeric_cols: list = ['# days', 'TDS #', 'Current Charges', 'EDP']
+        self.categorical_cols: list = ['Development Name', 'Borough', 'Account Name', 'Meter AMR', 'RC Code',
+                                       'Funding Source', 'AMP #', 'Vendor Name', 'Meter Number', 'Estimated', 'Revenue Month']
+
+        cols_to_drop: list = ['index', 'Location', 'Meter Scope',
+                              'UMIS BILL ID', 'Service Start Date', 'Service End Date']
+
+        numeric_transformer = Pipeline(steps=[
+            ('imputer', SimpleImputer(strategy='mean')),
+            ('scaler', StandardScaler())
+        ])
+        categorical_transformer = Pipeline(steps=[
+            ('imputer', SimpleImputer(strategy='most_frequent')),
+            ('encoder', OrdinalEncoder(handle_unknown='use_encoded_value', unknown_value=-1))
+        ])
+
+        self.preprocessor = ColumnTransformer(transformers=[
+            ('drop', FunctionTransformer(
+                pd.DataFrame.drop,
+                kw_args={'columns': cols_to_drop}), cols_to_drop),
+            ('num', numeric_transformer, self.numeric_cols),
+            ('cat', categorical_transformer, self.categorical_cols)
+        ], remainder='passthrough', verbose_feature_names_out=False)
+
+    def prepare_df(self, data: pd.DataFrame) -> pd.DataFrame:
+        y_df = data[self.target] if self.target in data.columns else None
+        X_df = data.drop([self.target], axis=1) if self.target in data.columns else data
+        data = pd.DataFrame(self.preprocessor.fit_transform(X_df), columns=self.numeric_cols+self.categorical_cols)
+        if y_df is not None:
+            data[self.target] = y_df
         return data
-        
-    
-    def fit(self, X_train, y_train, seed: int = 42) -> None:
-        model = XGBRegressor(max_depth=7, n_estimators=110, seed=seed).fit(X_train, y_train)
-        
-        with open('model.sav', 'wb') as f:
+
+    def fit(self, X_train: np.ndarray, y_train: np.ndarray) -> None:
+        model = XGBRegressor(seed=73, max_depth=7)
+        model.fit(X_train, y_train)
+
+        with open('ml_models/model.sav', 'wb') as f:
             joblib.dump(model, f, compress=3)
-    
-    def get_quality(self, model):
-        y_test: object
-        y_pred = self.predict_data()
+
+    def fit_df(self, data: pd.DataFrame) -> None:
+        y = data[self.target]
+        X = data.drop([self.target], axis=1)
+        self.fit(np.array(X), np.array(y))
+
+    def fit_df_with_prepare(self, data: pd.DataFrame) -> None:
+        self.fit_df(self.prepare_df(data))
+
+    def predict(self, X: np.ndarray) -> np.ndarray:
+        if not os.path.isfile('ml_models/model.sav'):
+            raise HTTPException(
+                status_code=status.HTTP_405_METHOD_NOT_ALLOWED, detail='Нет файла с моделью')
+
+        with open('ml_models/model.sav', 'rb') as f:
+            model: XGBRegressor = joblib.load(f)
+
+        return model.predict(X)
+
+    def predict_df(self, data: pd.DataFrame) -> pd.DataFrame:
+        X = data.drop([self.target], axis=1) if self.target in data.columns else data
+        return pd.DataFrame(self.predict(np.array(X)), columns=[self.target])
+
+    def predict_df_with_prepare(self, data: pd.DataFrame) -> pd.DataFrame:
+        X = self.prepare_df(data)
+        X = X.drop([self.target], axis=1) if self.target in X.columns else X
+        return self.predict_df(X)
+
+    def get_quality(self, y_test: np.ndarray, y_pred: np.ndarray) -> dict:
         return {
             'MAE': mean_absolute_error(y_test, y_pred),
             'MSE': mean_squared_error(y_test, y_pred),
@@ -39,15 +91,13 @@ class MLService:
             'MAPE': mean_absolute_percentage_error(y_test, y_pred),
             'R^2': r2_score(y_test, y_pred),
         }
-    
-    def predict_data(self, X_test) -> pd.DataFrame:
-        if not os.path.isfile('model.sav'):
-            raise HTTPException(status_code=status.HTTP_405_METHOD_NOT_ALLOWED, detail='Отсутствует файл с моделью')
-        
-        with open('model.sav', 'rb') as f:
-            model: XGBRegressor = joblib.load(f)
-        
-        # if not model:
-        #     raise HTTPException(status_code=status.HTTP_405_METHOD_NOT_ALLOWED, detail='Модель не обучена')
-        
-        return pd.DataFrame(model.predict(X_test))
+
+    def get_quality_df(self, data: pd.DataFrame) -> dict:
+        y = data[self.target]
+        X = data.drop([self.target], axis=1)
+        return self.get_quality(y, self.predict(X))
+
+    def get_quality_df_with_prepare(self, data: pd.DataFrame) -> dict:
+        y = data[self.target]
+        X = self.prepare_df(data.drop([self.target], axis=1))
+        return self.get_quality(y, self.predict(X))
