@@ -12,6 +12,14 @@ tags = [
         "name": "users",
         "description": "Управление пользователями"
     },
+    {
+        "name": "queries",
+        "description": "Взаимодействиями с историей запросов"
+    },
+    {
+        "name": "ml",
+        "description": "Взаимодействие с моделью машинного обучения"
+    },
 ]
 
 app = FastAPI(
