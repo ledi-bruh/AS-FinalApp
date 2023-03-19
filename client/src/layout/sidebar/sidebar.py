@@ -1,7 +1,6 @@
 import dash_bootstrap_components as dbc
 from dash import html
-
-from src.utils.constants import home_page_location, gdp_page_location, iris_page_location, auth_page_location, data_page_location
+from src.utils.constants import home_page_location, auth_page_location, data_page_location
 
 
 sidebar_header = dbc.Row(
@@ -58,8 +57,6 @@ sidebar = html.Div(
                     dbc.NavLink("Войти", href=auth_page_location, active="exact"),
                     dbc.NavLink("Домой", href=home_page_location, active="exact"),
                     dbc.NavLink("Датасет", href=data_page_location, active="exact"),
-                    # dbc.NavLink("GDP", href=gdp_page_location, active="exact"),
-                    # dbc.NavLink("Iris", href=iris_page_location, active="exact"),
                 ],
                 vertical=True,
                 pills=True,
