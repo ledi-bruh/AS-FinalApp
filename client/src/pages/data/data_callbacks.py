@@ -1,9 +1,8 @@
 import requests
-from dash import Input, Output, State, dash_table, exceptions
+from dash import Input, Output, State, dash_table
 import pandas as pd
 from app import app
 from src.core.settings import settings
-from src.components.table import make_dash_table
 
 
 def get_data(token):

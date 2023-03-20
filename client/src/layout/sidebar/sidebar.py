@@ -1,6 +1,6 @@
 import dash_bootstrap_components as dbc
 from dash import html
-from src.utils.constants import home_page_location, auth_page_location, data_page_location
+from src.utils.constants import home_page_location, auth_page_location, data_page_location, ml_page_location
 
 
 sidebar_header = dbc.Row(
@@ -12,7 +12,6 @@ sidebar_header = dbc.Row(
                     # use the Bootstrap navbar-toggler classes to style
                     html.Span(className="navbar-toggler-icon"),
                     className="navbar-toggler",
-                    # the navbar-toggler classes don't set color
                     style={
                         "color": "rgba(0,0,0,.5)",
                         "border-color": "rgba(0,0,0,.1)",
@@ -20,10 +19,8 @@ sidebar_header = dbc.Row(
                     id="navbar-toggle",
                 ),
                 html.Button(
-                    # use the Bootstrap navbar-toggler classes to style
                     html.Span(className="navbar-toggler-icon"),
                     className="navbar-toggler",
-                    # the navbar-toggler classes don't set color
                     style={
                         "color": "rgba(0,0,0,.5)",
                         "border-color": "rgba(0,0,0,.1)",
@@ -31,10 +28,7 @@ sidebar_header = dbc.Row(
                     id="sidebar-toggle",
                 ),
             ],
-            # the column containing the toggle will be only as wide as the
-            # toggle, resulting in the toggle being right aligned
             width="auto",
-            # vertically align the toggle in the center
             align="center",
         ),
     ]
@@ -57,6 +51,7 @@ sidebar = html.Div(
                     dbc.NavLink("Войти", href=auth_page_location, active="exact"),
                     dbc.NavLink("Домой", href=home_page_location, active="exact"),
                     dbc.NavLink("Датасет", href=data_page_location, active="exact"),
+                    dbc.NavLink("ML", href=ml_page_location, active="exact"),
                 ],
                 vertical=True,
                 pills=True,
