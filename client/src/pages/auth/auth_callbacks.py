@@ -31,7 +31,7 @@ def authenticate_user(username: str, password: str):
                State('token-store', 'data'),],
               prevent_initial_call=True)
 def authenticate_user_callback(clicks1, clicks2, username, password, token):
-    if clicks1 is None:
+    if clicks1 is None and clicks2 is None:
         raise PreventUpdate
     
     ctx = callback_context

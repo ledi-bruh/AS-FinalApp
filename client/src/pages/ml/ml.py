@@ -8,8 +8,7 @@ layout = dbc.Container(
         dcc.Upload(
             id='upload-data',
             children=html.Div([
-                'Drag and Drop or ',
-                html.A('Выберите файл'),
+                html.A('📂 Выберите файл 📂'),
             ]),
             accept='text/csv',
             style={
@@ -28,7 +27,7 @@ layout = dbc.Container(
         html.Div(className='col ml-col', children=[
             html.Div(className='col ml-col', children=[
                 html.Button(
-                    'Обучить модель на не предобработанных данных',
+                    '💥 Обучить модель на не предобработанных данных 💥',
                     id='fit-prepare-button',
                 ),
                 html.Button(
@@ -60,16 +59,14 @@ layout = dbc.Container(
             ),
         ]),
 
-        html.Div(
+        html.Pre(
             id='ml-status-output',
             style={'margin-top': '1vh'},
         ),
-        html.Div([
-            html.Pre(
-                id='quality-status-output',
-                style={'margin-top': '1vh', 'height': 'auto'}
-            ),
-        ]),
+        html.Pre(
+            id='quality-status-output',
+            style={'margin-top': '1vh', 'height': 'auto'}
+        ),
         dcc.Download(
             id='ml-file-download',
         ),

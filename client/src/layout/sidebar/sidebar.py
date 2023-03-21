@@ -28,19 +28,13 @@ sidebar_header = dbc.Row(
 sidebar = html.Div(
     [
         sidebar_header,
-        html.Div(
-            [
-                html.Hr(),
-                html.P("Навигация", className="lead"),
-            ],
-            id="blurb",
-        ),
+        html.Hr(),
         dbc.Collapse(
             dbc.Nav(
                 [
-                    dbc.NavLink("Войти", href=auth_page_location, active="exact"),
-                    dbc.NavLink("Датасет", href=data_page_location, active="exact"),
+                    dbc.NavLink("Аккаунт", href=auth_page_location, active="exact"),
                     dbc.NavLink("ML", href=ml_page_location, active="exact"),
+                    dbc.NavLink("Датасет", href=data_page_location, active="exact"),
                 ],
                 vertical=True,
                 pills=True,
