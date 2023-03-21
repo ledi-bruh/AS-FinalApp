@@ -6,8 +6,19 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+.ml-col {
     align-items: stretch;
     margin: 0 0 3vh;
+}
+
+.col-auth {
+    align-items: center;
+}
+
+.auth-form {
+    margin: 1% 0;
 }
 
 .navbar-toggler {

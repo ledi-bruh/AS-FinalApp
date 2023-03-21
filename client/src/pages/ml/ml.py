@@ -25,8 +25,8 @@ layout = dbc.Container(
             },
             multiple=False,
         ),
-        html.Div(className='col', children=[
-            html.Div(className='col', children=[
+        html.Div(className='col ml-col', children=[
+            html.Div(className='col ml-col', children=[
                 html.Button(
                     'Обучить модель на не предобработанных данных',
                     id='fit-prepare-button',
@@ -40,7 +40,7 @@ layout = dbc.Container(
                     id='quality-prepare-button',
                 ),
             ]),
-            html.Div(className='col', children=[
+            html.Div(className='col ml-col', children=[
                 html.Button(
                     'Обучить модель на предобработанных данных',
                     id='fit-button',
