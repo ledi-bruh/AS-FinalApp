@@ -3,7 +3,6 @@ import pandas as pd
 import plotly.express as px
 import requests
 from dash import Input, Output, State, dash_table
-from dash.exceptions import PageError
 from app import app
 from src.core.settings import settings
 
@@ -15,7 +14,7 @@ def get_data(token):
     if response.status_code == 200:
         return pd.read_json(response.json(), orient='records')
     elif response.status_code == 401:
-        raise PageError('Unauthorized')
+        raise Exception('Unauthorized')
     else:
         return None
 
