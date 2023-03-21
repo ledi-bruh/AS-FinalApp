@@ -27,6 +27,7 @@ def fit_df(file: UploadFile, encoding: str = 'utf-8', sep: str = ',', service: M
 @router.post('/fit/prepare', name='Обучить модель на не предобработанных данных')
 def fit_df_with_prepare(file: UploadFile, encoding: str = 'utf-8', sep: str = ',', service: MLService = Depends(), file_service: FileService = Depends()):
     data = file_service.upload_csv(file, encoding=encoding, sep=sep)
+    file_service.save_df_to_csv(data, 'train_data')
     return service.fit_df_with_prepare(data)
 
 
@@ -52,3 +53,8 @@ def get_quality_df(file: UploadFile, encoding: str = 'utf-8', sep: str = ',', se
 def get_quality_df(file: UploadFile, encoding: str = 'utf-8', sep: str = ',', service: MLService = Depends(), file_service: FileService = Depends()):
     data = file_service.upload_csv(file, encoding=encoding, sep=sep)
     return service.get_quality_df_with_prepare(data)
+
+
+@router.get('/train_data', name='Получить датасет')
+def get_df(file_service: FileService = Depends()):
+    return file_service.get_df_from_csv('train_data').to_json(orient='records')

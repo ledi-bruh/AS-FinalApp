@@ -45,15 +45,15 @@ class MLService:
         X_df = data.drop([self.target], axis=1) if self.target in data.columns else data
         preprocessor.fit(X_df)
         
-        with open('ml_models/preprocessor.joblib', 'wb') as f:
+        with open('data/models/preprocessor.joblib', 'wb') as f:
             joblib.dump(preprocessor, f, compress=3)
 
     def prepare_df(self, data: pd.DataFrame) -> pd.DataFrame:
-        if not os.path.isfile('ml_models/preprocessor.joblib'):
+        if not os.path.isfile('data/models/preprocessor.joblib'):
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail='Нет файла для предобработки')
             
-        with open('ml_models/preprocessor.joblib', 'rb') as f:
+        with open('data/models/preprocessor.joblib', 'rb') as f:
             preprocessor: ColumnTransformer = joblib.load(f)
         
         y_df = data[self.target] if self.target in data.columns else None
@@ -67,7 +67,7 @@ class MLService:
         model = XGBRegressor(seed=73, max_depth=7)
         model.fit(X_train, y_train)
 
-        with open('ml_models/model.joblib', 'wb') as f:
+        with open('data/models/model.joblib', 'wb') as f:
             joblib.dump(model, f, compress=3)
 
     def fit_df(self, data: pd.DataFrame) -> None:
@@ -80,11 +80,11 @@ class MLService:
         self.fit_df(self.prepare_df(data))
 
     def predict(self, X: np.ndarray) -> np.ndarray:
-        if not os.path.isfile('ml_models/model.joblib'):
+        if not os.path.isfile('data/models/model.joblib'):
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail='Нет файла с моделью')
 
-        with open('ml_models/model.joblib', 'rb') as f:
+        with open('data/models/model.joblib', 'rb') as f:
             model: XGBRegressor = joblib.load(f)
 
         return model.predict(X)
