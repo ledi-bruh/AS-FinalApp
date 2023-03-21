@@ -141,8 +141,7 @@ def ml_predict_prepare_callback(clicks1, clicks2, clicks3, content, token):
     response = send_file(content, token, sub_url)
 
     if response.status_code == 200:
-        df = pd.read_csv(
-            StringIO(response.content.decode(response.encoding)), header=None)
+        df = pd.read_csv(StringIO(response.content.decode(response.encoding)), header=None)
         return dcc.send_data_frame(df.to_csv, filename=f'{filename}.csv', index=False, header=None)
     elif response.status_code == 401:
         return 'Необходимо авторизоваться.'
