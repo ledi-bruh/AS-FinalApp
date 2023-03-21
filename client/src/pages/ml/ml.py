@@ -64,14 +64,14 @@ layout = dbc.Container(
             id='ml-status-output',
             style={'margin-top': '1vh'},
         ),
-        html.Div(
-            id='predict-status-output',
-            style={'margin-top': '1vh'},
-        ),
         html.Div([
             html.Pre(
                 id='quality-status-output',
                 style={'margin-top': '1vh', 'height': 'auto'}
-            ),])
+            ),
+        ]),
+        dcc.Download(
+            id='ml-file-download',
+        ),
     ]
 )
