@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, UploadFile, Response, BackgroundTasks
+from fastapi import APIRouter, Depends, UploadFile, BackgroundTasks
 from src.services.ml import MLService
 from src.services.file import FileService
 from src.services.auth import get_current_user
@@ -48,7 +48,7 @@ def get_quality_df(file: UploadFile, encoding: str = 'utf-8', sep: str = ',', se
     return service.get_quality_df(data)
 
 
-@router.post('/quality/prepare', name='Узнать качество модели по предобработанным данным')
+@router.post('/quality/prepare', name='Узнать качество модели по не предобработанным данным')
 def get_quality_df(file: UploadFile, encoding: str = 'utf-8', sep: str = ',', service: MLService = Depends(), file_service: FileService = Depends()):
     data = file_service.upload_csv(file, encoding=encoding, sep=sep)
     return service.get_quality_df_with_prepare(data)

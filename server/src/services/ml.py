@@ -100,11 +100,11 @@ class MLService:
 
     def get_quality(self, y_test: np.ndarray, y_pred: np.ndarray) -> dict:
         return {
+            'R^2': r2_score(y_test, y_pred),
             'MAE': mean_absolute_error(y_test, y_pred),
             'MSE': mean_squared_error(y_test, y_pred),
             'RMSE': sqrt(mean_squared_error(y_test, y_pred)),
             'MAPE': mean_absolute_percentage_error(y_test, y_pred),
-            'R^2': r2_score(y_test, y_pred),
         }
 
     def get_quality_df(self, data: pd.DataFrame) -> dict:
