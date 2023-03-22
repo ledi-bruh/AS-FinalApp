@@ -1,10 +1,10 @@
 uvicorn
 fastapi
 fastapi_utils
+alembic
 sqlalchemy
 python-dotenv
 psycopg2
-alembic
 python-jose
 passlib
 python-multipart
@@ -13,4 +13,4 @@ scikit-learn
 xgboost
 dash
 dash_bootstrap_components
-matplotlib
+requests
