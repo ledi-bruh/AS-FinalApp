@@ -3,9 +3,24 @@ import base64
 import requests
 import pandas as pd
 from io import StringIO
+from datetime import datetime
 from dash import dcc, Input, Output, State, callback_context, no_update
 from app import app
 from src.core.settings import settings
+
+
+def now():
+    time = datetime.now()
+    return time.strftime('%Y:%m:%d %H:%M:%S')
+
+
+def at_time(func): 
+    def wrapper(*args, **kwargs):
+        if type(f := func(*args, **kwargs)) is str:
+            return f'{now()}: {f}'
+        else:
+            return f
+    return wrapper
 
 
 def send_file(contents, token, sub_url):
@@ -27,40 +42,41 @@ def send_file(contents, token, sub_url):
                Input('fit-button', 'n_clicks'),],
               [State('upload-data', 'contents'),
                State('token-store', 'data')])
+@at_time
 def ml_fit_callback(clicks1, clicks2, content, token):
     ctx = callback_context
     if not ctx.triggered:
         return no_update
 
     if content is None:
-        return 'Сначала необходимо выбрать файл с тренировочной выборкой'
+        return f'Сначала необходимо выбрать файл с тренировочной выборкой.'
 
     button_id = ctx.triggered[0]['prop_id'].split('.')[0]
 
     info = {
         'fit-prepare-button': {
             'sub_url': 'fit/prepare',
-            'ok_msg': 'Данные успешно предобработаны. Модель обучена',
+            'ok_msg': 'Данные успешно предобработаны. Модель обучена.',
         },
         'fit-button': {
             'sub_url': 'fit',
-            'ok_msg': 'Модель успешно обучена',
+            'ok_msg': 'Модель успешно обучена.',
         },
     }
 
     if (btn := info.get(button_id, False)):
         sub_url, ok_msg = btn['sub_url'], btn['ok_msg']
     else:
-        return 'Ошибка'
+        return 'Ошибка.'
 
     response = send_file(content, token, sub_url)
 
     if response.status_code == 200:
         return ok_msg
     elif response.status_code == 401:
-        return 'Необходимо авторизоваться'
+        return 'Необходимо авторизоваться.'
 
-    return f'Ошибка {response.status_code}'
+    return f'Ошибка {response.status_code}.'
 
 
 @app.callback(Output('quality-status-output', 'children'),
@@ -68,13 +84,14 @@ def ml_fit_callback(clicks1, clicks2, content, token):
                Input('quality-button', 'n_clicks'),],
               [State('upload-data', 'contents'),
                State('token-store', 'data')])
+@at_time
 def ml_quality_callback(clicks1, clicks2, content, token):
     ctx = callback_context
     if not ctx.triggered:
         return no_update
 
     if content is None:
-        return 'Загрузить файл с тестовой выборкой можно выше'
+        return 'Загрузить файл с тестовой выборкой можно выше.'
 
     button_id = ctx.triggered[0]['prop_id'].split('.')[0]
 
@@ -90,16 +107,16 @@ def ml_quality_callback(clicks1, clicks2, content, token):
     if (btn := info.get(button_id, False)):
         sub_url = btn['sub_url']
     else:
-        return 'Ошибка'
+        return 'Ошибка.'
 
     response = send_file(content, token, sub_url)
 
     if response.status_code == 200:
         return json.dumps(dict(map(lambda x: (x[0], float(f'{x[1]:.4f}')), response.json().items())))
     elif response.status_code == 401:
-        return 'Необходимо авторизоваться'
+        return 'Необходимо авторизоваться.'
 
-    return f'Ошибка {response.status_code}'
+    return f'Ошибка {response.status_code}.'
 
 
 @app.callback(Output('ml-file-download', 'data'),
@@ -108,6 +125,7 @@ def ml_quality_callback(clicks1, clicks2, content, token):
                Input('prepare-button', 'n_clicks'),],
               [State('upload-data', 'contents'),
                State('token-store', 'data')])
+@at_time
 def ml_predict_prepare_callback(clicks1, clicks2, clicks3, content, token):
     ctx = callback_context
     if not ctx.triggered:
@@ -136,7 +154,7 @@ def ml_predict_prepare_callback(clicks1, clicks2, clicks3, content, token):
     if (btn := info.get(button_id, False)):
         sub_url, filename = btn['sub_url'], btn['filename']
     else:
-        return 'Ошибка'
+        return 'Ошибка.'
 
     response = send_file(content, token, sub_url)
 
@@ -144,6 +162,6 @@ def ml_predict_prepare_callback(clicks1, clicks2, clicks3, content, token):
         df = pd.read_csv(StringIO(response.content.decode(response.encoding)), header=None)
         return dcc.send_data_frame(df.to_csv, filename=f'{filename}.csv', index=False, header=None)
     elif response.status_code == 401:
-        return 'Необходимо авторизоваться'
+        return 'Необходимо авторизоваться.'
 
-    return f'Ошибка {response.status_code}'
+    return f'Ошибка {response.status_code}.'
