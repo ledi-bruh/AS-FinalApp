@@ -33,8 +33,8 @@ sidebar = html.Div(
             dbc.Nav(
                 [
                     dbc.NavLink("Аккаунт", href=auth_page_location, active="exact"),
-                    dbc.NavLink("ML", href=ml_page_location, active="exact"),
-                    dbc.NavLink("Датасет", href=data_page_location, active="exact"),
+                    dbc.NavLink("Машинное обучение", href=ml_page_location, active="exact"),
+                    dbc.NavLink("Визуализации", href=data_page_location, active="exact"),
                 ],
                 vertical=True,
                 pills=True,
