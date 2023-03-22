@@ -3,8 +3,8 @@ from fastapi import HTTPException, status, Depends
 from sqlalchemy.orm import Session
 from src.db.db import get_session
 from src.models.users import Users
-from src.models.schemas.users.users_request import UsersRequest
-from src.services.utils.secure import SecureService
+from src.models.schemas.users.request import UsersRequest
+from src.services.secure import SecureService
 
 
 class UsersService:

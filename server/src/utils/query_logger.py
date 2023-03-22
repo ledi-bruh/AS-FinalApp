@@ -1,9 +1,9 @@
 from datetime import datetime, timezone
 from fastapi import Depends, Request
-from src.services.auth import get_current_user
-from src.models.queries import Queries
 from sqlalchemy.orm import Session
 from src.db.db import get_session
+from src.models.queries import Queries
+from src.services.auth import get_current_user
 
 
 class QueryLogger:
@@ -20,6 +20,3 @@ class QueryLogger:
         )
         session.add(query)
         session.commit()
-
-
-QUERY_LOGGER = QueryLogger()

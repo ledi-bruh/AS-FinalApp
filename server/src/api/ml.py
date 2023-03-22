@@ -1,14 +1,13 @@
 from fastapi import APIRouter, Depends, UploadFile, BackgroundTasks
 from src.services.ml import MLService
 from src.services.file import FileService
-from src.services.auth import get_current_user
-from src.api.utils.query_logger import QUERY_LOGGER
+from src.dependencies import AUTHORIZED, QUERY_LOGGER
 
 
 router = APIRouter(
     prefix='/ml',
     tags=['ml'],
-    dependencies=[Depends(get_current_user), Depends(QUERY_LOGGER)]
+    dependencies=[Depends(AUTHORIZED), Depends(QUERY_LOGGER)]
 )
 
 

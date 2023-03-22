@@ -1,4 +1,3 @@
-from typing import Optional
 from datetime import datetime, timezone, timedelta
 from fastapi import HTTPException, status, Depends
 from fastapi.security import OAuth2PasswordBearer
@@ -8,7 +7,7 @@ from src.db.db import get_session
 from src.core.settings import settings
 from src.models.users import Users
 from src.models.schemas.utils.jwt_token import JwtToken
-from src.services.utils.secure import SecureService
+from src.services.secure import SecureService
 
 
 oauth2_schema = OAuth2PasswordBearer(tokenUrl='/auth/login')
