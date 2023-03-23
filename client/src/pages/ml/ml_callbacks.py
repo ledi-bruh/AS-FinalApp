@@ -2,7 +2,7 @@ import json
 import base64
 import requests
 import pandas as pd
-from io import StringIO
+from io import BytesIO
 from dash import dcc, Input, Output, State, callback_context, no_update
 from app import app
 from src.core.settings import settings
@@ -12,7 +12,7 @@ from src.utils.functions import at_time
 def send_file(contents, token, sub_url):
     content_type, content_string = contents.split(',')
     decoded = base64.b64decode(content_string)
-    url = f'{settings.backend_url}/ml/{sub_url}'
+    url = f'{settings.backend_url}/{sub_url}'
 
     response = requests.post(
         url,
@@ -41,11 +41,11 @@ def ml_fit_callback(clicks1, clicks2, content, token):
 
     info = {
         'fit-prepare-button': {
-            'sub_url': 'fit/prepare',
+            'sub_url': 'ml/fit/prepare',
             'ok_msg': 'Данные успешно предобработаны. Модель обучена.',
         },
         'fit-button': {
-            'sub_url': 'fit',
+            'sub_url': 'ml/fit',
             'ok_msg': 'Модель успешно обучена.',
         },
     }
@@ -83,10 +83,10 @@ def ml_quality_callback(clicks1, clicks2, content, token):
 
     info = {
         'quality-prepare-button': {
-            'sub_url': 'quality/prepare',
+            'sub_url': 'ml/quality/prepare',
         },
         'quality-button': {
-            'sub_url': 'quality',
+            'sub_url': 'ml/quality',
         },
     }
 
@@ -124,15 +124,15 @@ def ml_predict_prepare_callback(clicks1, clicks2, clicks3, content, token):
 
     info = {
         'predict-prepare-button': {
-            'sub_url': 'predict/prepare',
+            'sub_url': 'ml/predict/prepare',
             'filename': 'predicted_data',
         },
         'predict-button': {
-            'sub_url': 'predict',
+            'sub_url': 'ml/predict',
             'filename': 'predicted_data',
         },
         'prepare-button': {
-            'sub_url': 'prepare',
+            'sub_url': 'ml/prepare',
             'filename': 'prepared_data',
         },
     }
@@ -145,7 +145,7 @@ def ml_predict_prepare_callback(clicks1, clicks2, clicks3, content, token):
     response = send_file(content, token, sub_url)
 
     if response.status_code == 200:
-        df = pd.read_csv(StringIO(response.content.decode(response.encoding)), header=None)
+        df = pd.read_csv(BytesIO(response.content), header=None)
         return dcc.send_data_frame(df.to_csv, filename=f'{filename}.csv', index=False, header=None)
     elif response.status_code == 401:
         return 'Необходимо авторизоваться.'
