@@ -7,7 +7,7 @@ layout = dbc.Container(
     [
         dcc.Interval(
             id='auth-status-interval',
-            interval=5000,
+            interval=3000,
             n_intervals=0
         ),
         html.Div(

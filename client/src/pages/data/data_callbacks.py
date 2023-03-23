@@ -49,7 +49,7 @@ def get_data_callback(n_clicks, token):
         title='Распределение TDS (Общее количество растворенных твердых веществ)',
         x=labels,
         y=counts,
-        labels={'x':'TDS'},
+        labels={'x':'TDS', 'y': 'vals'},
         # histfunc='avg',
     )
     

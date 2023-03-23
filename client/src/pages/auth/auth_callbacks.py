@@ -14,12 +14,9 @@ def authenticate_user(username: str, password: str):
     response = requests.post(url, data=data)
     response_json: dict = response.json()
 
-    if response.status_code == 200:
+    if response.ok:
         return response_json.get('access_token')
-    elif response.status_code == 401:
-        raise Exception('Unauthorized')
-    else:
-        return None
+    return None
 
 
 @app.callback([Output('auth-output', 'children'),
@@ -44,9 +41,9 @@ def authenticate_user_callback(clicks1, clicks2, username, password, token):
         return 'Вы вышли из аккаунта', None
     
     if (token := authenticate_user(username, password)):
-        return 'Вы вошли в аккаунт', token
+        return 'Вы вошли в аккаунт.', token
     else:
-        return 'Authentication error', None
+        return 'Ошибка при авторизации.', None
 
 
 @app.callback(Output('auth-status-output', 'children'),

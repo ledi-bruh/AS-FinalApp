@@ -25,8 +25,26 @@ h1, h2, h3, h4, h5, h6 {
     align-items: center;
 }
 
+#auth-status-output {
+    scale: 1.73;
+}
+
 .auth-form {
-    margin: 1% 0;
+    margin: 2rem 0 0.5rem;
+}
+
+.sign-container {
+    display: flex;
+    flex-direction: column;
+    scale: 0.9;
+}
+
+#username-input {
+    margin: 0 0 0.5rem;
+}
+
+#sign-in-button, #sign-out-button {
+    margin: 0 0 0.5rem;
 }
 
 .navbar-toggler {

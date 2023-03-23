@@ -3,24 +3,10 @@ import base64
 import requests
 import pandas as pd
 from io import StringIO
-from datetime import datetime
 from dash import dcc, Input, Output, State, callback_context, no_update
 from app import app
 from src.core.settings import settings
-
-
-def now():
-    time = datetime.now()
-    return time.strftime('%Y:%m:%d %H:%M:%S')
-
-
-def at_time(func): 
-    def wrapper(*args, **kwargs):
-        if type(f := func(*args, **kwargs)) is str:
-            return f'{now()}: {f}'
-        else:
-            return f
-    return wrapper
+from src.utils.functions import at_time
 
 
 def send_file(contents, token, sub_url):
