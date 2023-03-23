@@ -9,7 +9,7 @@ from alembic import op
 import sqlalchemy as sa
 from fastapi_utils.guid_type import GUID, GUID_DEFAULT_SQLITE
 from src.core.settings import settings
-from src.services.utils.secure import SecureService
+from src.services.secure import SecureService
 
 
 # revision identifiers, used by Alembic.
