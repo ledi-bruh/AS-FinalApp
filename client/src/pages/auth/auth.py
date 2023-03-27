@@ -15,8 +15,8 @@ layout = dbc.Container(
             children=[
                 html.Div(id='auth-status-output'),
                 html.Div(className='col auth-form', children=[
-                    dcc.Input(id='username-input', type='text', placeholder='Username'),
-                    dcc.Input(id='password-input', type='password', placeholder='Password'),
+                    dcc.Input(id='username-input', type='text', placeholder='Логин'),
+                    dcc.Input(id='password-input', type='password', placeholder='Пароль'),
                 ]),
                 html.Div(
                     className='sign-container',
