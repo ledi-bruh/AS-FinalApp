@@ -3,7 +3,15 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-    color: rgb(63, 105, 255)
+    color: rgb(63, 105, 255);
+}
+
+button {
+    transition: all 0.2s ease 0s;
+}
+
+button:hover {
+    scale: 1.01;
 }
 
 #page-content {
@@ -48,6 +56,10 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .navbar-toggler {
-    color: rgba(0,0,0,.5);
-    border-color: rgba(0,0,0,.1);
+    color: rgba(0, 0, 0, 0.5);
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+#train-data-output {
+    margin-top: 1vh;
 }

@@ -30,16 +30,16 @@ def authenticate_user(username: str, password: str):
 def authenticate_user_callback(clicks1, clicks2, username, password, token):
     if clicks1 is None and clicks2 is None:
         raise PreventUpdate
-    
+
     ctx = callback_context
     if not ctx.triggered:
         return no_update
-    
+
     button_id = ctx.triggered[0]['prop_id'].split('.')[0]
-    
+
     if button_id == 'sign-out-button':
         return 'Вы вышли из аккаунта', None
-    
+
     if (token := authenticate_user(username, password)):
         return 'Вы вошли в аккаунт.', token
     else:

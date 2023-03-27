@@ -9,6 +9,10 @@
     margin: 0;
 }
 
+#sidebar hr {
+    border-top: 1px solid #000000;
+}
+
 #sidebar-toggle {
     display: none;
 }
